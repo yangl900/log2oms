@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-log2oms
+  namespace: default
+  labels:
+    app: nginx
+    logger: log2oms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      logger: log2oms
+  template:
+    metadata:
+      labels:
+        app: nginx
+        logger: log2oms
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - mountPath: /var/log/nginx
+          name: logs
+        ports:
+        - containerPort: 80
+      - image: yangl/log2oms
+        name: log2oms
+        volumeMounts:
+        - mountPath: /logs
+          name: logs
+        env:
+        - name: LOG2OMS_WORKSPACE_ID
+          value: {OMS_WORKSPACE_ID}
+        - name: LOG2OMS_WORKSPACE_SECRET
+          value: {OMS_WORKSPACE_SECRET}
+        - name: LOG2OMS_LOG_FILE
+          value: /logs/access.log
+        - name: LOG2OMS_LOG_TYPE
+          value: nginx_access
+      volumes:
+      - name: logs
+        emptyDir: {}
