@@ -50,4 +50,4 @@ Start tail logs from: /logs/access.log
 [Tue, 27 Feb 2018 07:04:49 GMT] Posted 2 messages.
 [Tue, 27 Feb 2018 07:11:13 GMT] Posted 2 messages.
 ```
-４． Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
+4. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
