@@ -5,7 +5,7 @@ A super tiny agent (binary 7MB, container 12MB) that pushs app logs to Azure Log
 I have been exploring options to push container logs to a remote storage like Log Analytics. A few available options are:
 
 * Use OMS container (https://hub.docker.com/r/microsoft/oms/) to push logs. However, 1) this solution requires running the OMS container as privileged. 2) the size of the image (307MB)...isn't very nice.
-* Install OMS agent into my app container. I tried, and realized 1) it comes with lots of dependencies, python etc. 2) it doesn't support alpine. 2) Size of just the installer (omsagent-1.4.4-210.universal.x64.sh 110MB), isn't very container fridenly. Since I only want to upload logs, most of the dependencies are unnecessary.
+* Install OMS agent into my app container. I tried, and realized 1) it comes with lots of dependencies, python etc. 2) it doesn't support alpine. 3) Size of just the installer (omsagent-1.4.4-210.universal.x64.sh 110MB), isn't very container fridenly. Since I only want to upload logs, most of the dependencies are really unnecessary.
 
 Given I simply want logs uploaded, I decided to implement a tiny agent that uses Log Analytics data collector API (https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-data-collector-api), and make it container friendly.
 
