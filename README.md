@@ -15,6 +15,7 @@ The best way to use this agent is by adopting the "sidecar" pattern. Having this
 
 Take a nginx web server as example, you simply run yangl/log2oms as another container and shares the nginx /var/log/nginx volume. Log2OMS will tail the nginx logs and upload to Log Analytics.
 
+```
   +-----------------------------+
   |              |              |
   |    NGINX     |     log2oms  |
@@ -23,6 +24,7 @@ Take a nginx web server as example, you simply run yangl/log2oms as another cont
   |        (shared volume)      |
   |        /var/log/nginx       |
   +-----------------------------+
+```
 
 The log2oms container requires only 4 environment variables to run:
 
