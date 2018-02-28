@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/yangl900/log2oms)](https://goreportcard.com/report/github.com/yangl900/log2oms) [![Build Status](https://travis-ci.org/yangl900/log2oms.svg?branch=master)](https://travis-ci.org/yangl900/log2oms)
+
 # log2oms
 A super tiny agent (binary 7MB, container 12MB) that pushs app logs to Azure Log Analytics (OMS)
 
