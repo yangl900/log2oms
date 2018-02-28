@@ -1,0 +1,142 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "containergroupname": {
+        "type": "string",
+        "metadata": {
+          "description": "Name for the container group"
+        }
+      },
+      "OMS_WORKSPACE_ID": {
+        "type": "string",
+        "metadata": {
+          "description": "OMS workspace Id."
+        }
+      },
+      "OMS_WORKSPACE_SECRET": {
+        "type": "securestring",
+        "metadata": {
+          "description": "OMS workspace secret. Find it in Advanced Settings in Azure portal."
+        }
+      },
+      "OMS_LOG_TYPE": {
+        "type": "string",
+        "metadata": {
+          "description": "OMS log type, the table name in Log Analytics."
+        },
+        "defaultValue": "nginx_access"
+      },
+      "cpuCores": {
+        "type": "string",
+        "metadata": {
+          "description": "The number of CPU cores to allocate to the container."
+        },
+        "defaultValue": "1.0"
+      },
+      "memoryInGb": {
+        "type": "string",
+        "metadata": {
+          "description": "The amount of memory to allocate to the container in gigabytes."
+        },
+        "defaultValue": "1.5"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "name": "[parameters('containergroupname')]",
+        "type": "Microsoft.ContainerInstance/containerGroups",
+        "apiVersion": "2018-02-01-preview",
+        "location": "eastus",
+        "properties": {
+          "containers": [
+            {
+              "name": "nginx",
+              "properties": {
+                "image": "nginx",
+                "ports": [
+                  {
+                    "port": 80
+                  }
+                ],
+                "resources": {
+                  "requests": {
+                    "cpu": 0.9,
+                    "memoryInGb": 0.9
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "logs",
+                    "mountPath": "/var/log/nginx",
+                    "readOnly": false
+                  }
+                ]
+              }
+            },
+            {
+              "name": "log2oms",
+              "properties": {
+                "image": "yangl/log2oms",
+                "resources": {
+                  "requests": {
+                    "cpu": 0.1,
+                    "memoryInGb": 0.1
+                  }
+                },
+                "environmentVariables": [
+                  {
+                    "name": "LOG2OMS_WORKSPACE_ID",
+                    "value": "[parameters('OMS_WORKSPACE_ID')]"
+                  },
+                  {
+                    "name": "LOG2OMS_WORKSPACE_SECRET",
+                    "value": "[parameters('OMS_WORKSPACE_SECRET')]"
+                  },
+                  {
+                    "name": "LOG2OMS_LOG_FILE",
+                    "value": "/logs/access.log"
+                  },
+                  {
+                    "name": "LOG2OMS_LOG_TYPE",
+                    "value": "[parameters('OMS_LOG_TYPE')]"
+                  }
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "logs",
+                    "mountPath": "/logs",
+                    "readOnly": true
+                  }
+                ]
+              }
+            }
+          ],
+          "osType": "Linux",
+          "ipAddress": {
+            "type": "Public",
+            "ports": [
+              {
+                "protocol": "tcp",
+                "port": 80
+              }
+            ]
+          },
+          "volumes": [
+            {
+              "name": "logs",
+              "emptyDir": {}
+            }
+          ]
+        }
+      }
+    ],
+    "outputs": {
+      "containerIPv4Address": {
+        "type": "string",
+        "value": "[reference(resourceId('Microsoft.ContainerInstance/containerGroups/', parameters('containergroupname'))).ipAddress.ip]"
+      }
+    }
+  }
+  
