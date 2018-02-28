@@ -4,10 +4,10 @@ A super tiny agent (binary 7MB, container 12MB) that pushs app logs to Azure Log
 # Why we need this
 I have been exploring options to push container logs to a remote storage like Log Analytics. A few available options are:
 
-* Use OMS container (https://hub.docker.com/r/microsoft/oms/) to push logs. However, 1) this solution requires running the OMS container as privileged. 2) the size of the image (307MB)...isn't very nice.
+* Use OMS container (https://hub.docker.com/r/microsoft/oms/) to push logs. However, 1) this solution requires running the OMS container as privileged, so it won't work on services like ACI. 2) the size of the image (307MB)...isn't very nice.
 * Install OMS agent into my app container. I tried, and realized 1) it comes with lots of dependencies, python etc. 2) it doesn't support alpine. 3) Size of just the installer (omsagent-1.4.4-210.universal.x64.sh 110MB), isn't very container fridenly. Since I only want to upload logs, most of the dependencies are really unnecessary.
 
-Given I simply want logs uploaded, I decided to implement a tiny agent that uses Log Analytics data collector API (https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-data-collector-api), and make it container friendly.
+So I implemented this tiny agent that uses Log Analytics data collector API (https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-data-collector-api), and make it container friendly.
 
 # How to use it
 ## Sidecar
@@ -38,7 +38,7 @@ The log2oms container requires only 4 environment variables to run:
 
 And that's it. No changes needed from app container.
 
-## Sample in Kubernetes
+## Sample for Kubernetes
 `samples/kubernetes/deploy.yaml` is a sample yaml how to deploy an nginx server with log2oms as a sidecar. 
 
 To try the sample:
@@ -51,3 +51,16 @@ Start tail logs from: /logs/access.log
 [Tue, 27 Feb 2018 07:11:13 GMT] Posted 2 messages.
 ```
 4. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
+
+## Sample for Azure Container Instances
+1. Click the deploy-to-azure button in [ACI sample page](https://github.com/yangl900/log2oms/tree/master/samples/azure-container-instance) to create an nginx container in ACI with the log2oms sidecar. 
+2. After deployment succeed (should be a few seconds), access the container public IP address to generate a few lines of logs. Use Azure portal or [Cloud Shell](https://shell.azure.com) command `az container show -g {resource-group} -n {container-group-name}` to find out the public IP address.
+3. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
+
+# Production usage
+This project demonstrate how sidecar pattern upload logs to OMS, however it's probably not production ready yet (contributions welcome though!）
+
+A few problems / limitations:
+* Currently there is no retry on post log failures. if OMS server failed to process the request, some logs may get lost. Logs are posted to OMS API in batch. The batch size is every 5 seconds of logs, or 8 MＢ, or 100k lines, whichever hit first. So if a request fails, one such batch will lost.
+* Doesn't support watch multiple log files yet.
+* Doesn't support structured logs, it's now pure text based.
