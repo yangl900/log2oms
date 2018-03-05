@@ -22,7 +22,7 @@ var (
 )
 
 func logLines(client *logclient.LogClient, lines []string) {
-	err := client.PostMessages(lines)
+	err := client.PostMessages(lines, time.Now().UTC())
 	if err != nil {
 		fmt.Println(err)
 	}

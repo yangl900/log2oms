@@ -45,15 +45,19 @@ func NewLogClient(workspaceID, workspaceSecret, logType string) LogClient {
 }
 
 // PostMessage logs a single message to log analytics service
-func (c *LogClient) PostMessage(message string) error {
-	return c.PostMessages([]string{message})
+func (c *LogClient) PostMessage(message string, timestamp time.Time) error {
+	return c.PostMessages([]string{message}, timestamp)
 }
 
 // PostMessages logs an array of messages to log analytics service
-func (c *LogClient) PostMessages(messages []string) error {
+func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 	var logs []log
 	for _, m := range messages {
 		logs = append(logs, log{Data: m})
+	}
+
+	if timestamp.IsZero() {
+		timestamp = time.Now().UTC()
 	}
 
 	body, _ := json.Marshal(logs)
@@ -68,6 +72,7 @@ func (c *LogClient) PostMessages(messages []string) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Log-Type", c.logType)
 	req.Header.Set("x-ms-date", date)
+	req.Header.Set("time-generated-field", timestamp.Format(time.RFC3339))
 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
@@ -78,10 +83,21 @@ func (c *LogClient) PostMessages(messages []string) error {
 		defer response.Body.Close()
 		buf, _ := ioutil.ReadAll(response.Body)
 
+		time.AfterFunc(
+			time.Second*15,
+			func() {
+				err := c.PostMessages(messages, timestamp)
+				if err != nil {
+					fmt.Printf("[%s] Retry failed, will keep retrying", time.Now().UTC().Format(time.RFC3339))
+				} else {
+					fmt.Printf("[%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
+				}
+			})
+
 		return fmt.Errorf("Post log request failed with status: %d %s", response.StatusCode, string(buf))
 	}
 
-	fmt.Printf("[%s] Posted %d messages.\n", date, len(logs))
+	fmt.Printf("[%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
 
 	return nil
 }
