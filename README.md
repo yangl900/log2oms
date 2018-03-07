@@ -62,7 +62,8 @@ Start tail logs from: /logs/access.log
 # Production usage
 This project demonstrate how sidecar pattern upload logs to OMS, however it's probably not production ready yet (contributions welcome though!）
 
-A few problems / limitations:
-* Currently there is no retry on post log failures. if OMS server failed to process the request, some logs may get lost. Logs are posted to OMS API in batch. The batch size is every 5 seconds of logs, or 8 MＢ, or 100k lines, whichever hit first. So if a request fails, one such batch will lost.
-* Doesn't support watch multiple log files yet.
-* Doesn't support structured logs, it's now pure text based.
+# Future improvements
+* Support watch multiple log files, so you can split stdout / stderr or logs from multiple containers in same pod.
+* Ｉｎｃｌｕｄｅ metadata in log lines, so you can filter logs by container name, location, etc in log analytics.
+* Send a heartbeat signal to log analytics so you know when it is working / stop working.
+* Ｐｒｉｎｔ out collected logs to stdout, easier for debugging scenario when you have access to container, like `kubectl logs`
