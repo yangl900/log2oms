@@ -64,6 +64,6 @@ This project demonstrate how sidecar pattern upload logs to OMS, however it's pr
 
 # Future improvements
 * Support watch multiple log files, so you can split stdout / stderr or logs from multiple containers in same pod.
-* Ｉｎｃｌｕｄｅ metadata in log lines, so you can filter logs by container name, location, etc in log analytics.
+* Include metadata in log lines, so you can filter logs by container name, location, etc in log analytics.
 * Send a heartbeat signal to log analytics so you know when it is working / stop working.
-* Ｐｒｉｎｔ out collected logs to stdout, easier for debugging scenario when you have access to container, like `kubectl logs`
+* Print out collected logs to stdout, easier for debugging scenario when you have access to container, like `kubectl logs`
