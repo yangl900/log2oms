@@ -48,9 +48,9 @@ To try the sample:
 2. curl the pod IP on port 80 to generate a few lines of nginx logs.
 3. `kubectl logs {pod-name} log2oms` should show some agent logs like following
 ```
-Start tail logs from: /logs/access.log
-[Tue, 27 Feb 2018 07:04:49 GMT] Posted 2 messages.
-[Tue, 27 Feb 2018 07:11:13 GMT] Posted 2 messages.
+[LOG2OMS][2018-03-17T04:21:36Z] Start tail logs from: /logs/access.log
+[2018-03-17T04:22:56Z] 10.244.0.1 - - [17/Mar/2018:04:22:56 +0000] "GET / HTTP/1.1" 200 612 "-" "curl/7.47.0" "-"
+[LOG2OMS][2018-03-17T04:23:01Z] Posted 1 messages.
 ```
 4. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
 
@@ -66,4 +66,3 @@ This project demonstrate how sidecar pattern upload logs to OMS, however it's pr
 * Support watch multiple log files, so you can split stdout / stderr or logs from multiple containers in same pod.
 * Include metadata in log lines, so you can filter logs by container name, location, etc in log analytics.
 * Send a heartbeat signal to log analytics so you know when it is working / stop working.
-* Print out collected logs to stdout, easier for debugging scenario when you have access to container, like `kubectl logs`
