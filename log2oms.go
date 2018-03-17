@@ -50,7 +50,7 @@ func main() {
 		logType = "container_logs"
 	}
 
-	fmt.Printf("Start tail logs from: %s\n", logfile)
+	fmt.Printf("[LOG2OMS][%s] Start tail logs from: %s\n", time.Now().UTC().Format(time.RFC3339), logfile)
 
 	client := logclient.NewLogClient(workspaceID, workspaceSecret, logType)
 
@@ -67,6 +67,8 @@ func main() {
 		case line := <-t.Lines:
 			if line.Err != nil {
 				fmt.Println(line.Err)
+			} else {
+				fmt.Printf("[%s] %s\n", line.Time.UTC().Format(time.RFC3339), line.Text)
 			}
 
 			lines = append(lines, line.Text)

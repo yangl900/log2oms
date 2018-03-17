@@ -88,16 +88,16 @@ func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 			func() {
 				err := c.PostMessages(messages, timestamp)
 				if err != nil {
-					fmt.Printf("[%s] Retry failed, will keep retrying", time.Now().UTC().Format(time.RFC3339))
+					fmt.Printf("[LOG2OMS][%s] Retry failed, will keep retrying", time.Now().UTC().Format(time.RFC3339))
 				} else {
-					fmt.Printf("[%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
+					fmt.Printf("[LOG2OMS][%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
 				}
 			})
 
-		return fmt.Errorf("Post log request failed with status: %d %s", response.StatusCode, string(buf))
+		return fmt.Errorf("[LOG2OMS][%s] Post log request failed with status: %d %s", time.Now().UTC().Format(time.RFC3339), response.StatusCode, string(buf))
 	}
 
-	fmt.Printf("[%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
+	fmt.Printf("[LOG2OMS][%s] Posted %d messages.\n", time.Now().UTC().Format(time.RFC3339), len(logs))
 
 	return nil
 }
