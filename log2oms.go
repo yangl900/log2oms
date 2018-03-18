@@ -32,6 +32,8 @@ func logLines(client *logclient.LogClient, lines []string) {
 
 func metadata() map[string]string {
 	metadata := make(map[string]string)
+	metadata["Hostname"], _ = os.Hostname()
+
 	for _, e := range os.Environ() {
 		pair := strings.Split(e, "=")
 
@@ -67,8 +69,6 @@ func main() {
 	}
 
 	metadata := metadata()
-	metadata["Hostname"], _ = os.Hostname()
-
 	for m := range metadata {
 		fmt.Printf("[LOG2OMS][%s] %s = %s\n", time.Now().UTC().Format(time.RFC3339), m, metadata[m])
 	}
