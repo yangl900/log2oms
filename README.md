@@ -1,7 +1,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/yangl900/log2oms)](https://goreportcard.com/report/github.com/yangl900/log2oms) [![Build Status](https://travis-ci.org/yangl900/log2oms.svg?branch=master)](https://travis-ci.org/yangl900/log2oms)
 
 # log2oms
-A super tiny agent (binary 7MB, container 12MB) that pushs app logs to Azure Log Analytics (OMS)
+A super tiny agent (binary 5MB, container 12MB) that pushs app logs to Azure Log Analytics (OMS)
 
 # Why we need this
 I have been exploring options to push container logs to a remote storage like Log Analytics. A few available options are:
@@ -61,6 +61,19 @@ To try the sample:
 1. Click the deploy-to-azure button in [ACI sample page](https://github.com/yangl900/log2oms/tree/master/samples/azure-container-instance) to create an nginx container in ACI with the log2oms sidecar. 
 2. After deployment succeed (should be a few seconds), access the container public IP address to generate a few lines of logs. Use Azure portal or [Cloud Shell](https://shell.azure.com) command `az container show -g {resource-group} -n {container-group-name}` to find out the public IP address.
 3. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
+
+## Run binary directly
+You can also run log2oms as a binary directly, anywhere, either you need upload existing log files or tail a file and keep uploading.
+
+```bash
+#! /bin/bash
+export LOG2OMS_WORKSPACE_ID={workspace-id}
+export LOG2OMS_WORKSPACE_SECRET={workspace-secret}
+export LOG2OMS_LOG_FILE={path-to-logfile}
+export LOG2OMS_LOG_TYPE={log-table-name}
+
+curl -sL https://github.com/yangl900/log2oms/releases/download/v0.1.0/log2oms_linux_64-bit.tar.gz | tar xz && ./log2oms
+```
 
 # Future improvements
 * Send a heartbeat signal to log analytics so you know when it is working / stop working.
