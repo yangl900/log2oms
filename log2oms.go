@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/hpcloud/tail"
@@ -14,6 +15,7 @@ const (
 	envLogType         = "LOG2OMS_LOG_TYPE"
 	envWorkspaceID     = "LOG2OMS_WORKSPACE_ID"
 	envWorkspaceSecret = "LOG2OMS_WORKSPACE_SECRET"
+	envMetadataPrefix  = "LOG2OMS_META_"
 )
 
 var (
@@ -26,6 +28,22 @@ func logLines(client *logclient.LogClient, lines []string) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func metadata() map[string]string {
+	metadata := make(map[string]string)
+	metadata["Hostname"], _ = os.Hostname()
+
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+
+		if strings.HasPrefix(pair[0], envMetadataPrefix) {
+			key := strings.TrimPrefix(pair[0], envMetadataPrefix)
+			metadata[key] = pair[1]
+		}
+	}
+
+	return metadata
 }
 
 func main() {
@@ -50,9 +68,14 @@ func main() {
 		logType = "container_logs"
 	}
 
+	metadata := metadata()
+	for m := range metadata {
+		fmt.Printf("[LOG2OMS][%s] %s = %s\n", time.Now().UTC().Format(time.RFC3339), m, metadata[m])
+	}
+
 	fmt.Printf("[LOG2OMS][%s] Start tail logs from: %s\n", time.Now().UTC().Format(time.RFC3339), logfile)
 
-	client := logclient.NewLogClient(workspaceID, workspaceSecret, logType)
+	client := logclient.NewLogClient(workspaceID, workspaceSecret, logType, metadata)
 
 	t, err := tail.TailFile(logfile, tail.Config{ReOpen: true, Follow: true})
 	if err != nil {

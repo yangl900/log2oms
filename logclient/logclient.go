@@ -23,18 +23,20 @@ type LogClient struct {
 	httpClient      *http.Client
 	signingKey      []byte
 	apiLogsURL      string
-}
-
-type log struct {
-	Data string `json:"data"`
+	metadata        map[string]string
 }
 
 // NewLogClient creates a log client
-func NewLogClient(workspaceID, workspaceSecret, logType string) LogClient {
+func NewLogClient(workspaceID, workspaceSecret, logType string, metadata map[string]string) LogClient {
 	client := LogClient{
 		workspaceID:     workspaceID,
 		workspaceSecret: workspaceSecret,
 		logType:         logType,
+		metadata:        metadata,
+	}
+
+	if client.metadata == nil {
+		client.metadata = map[string]string{}
 	}
 
 	client.httpClient = &http.Client{Timeout: time.Second * 30}
@@ -51,9 +53,15 @@ func (c *LogClient) PostMessage(message string, timestamp time.Time) error {
 
 // PostMessages logs an array of messages to log analytics service
 func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
-	var logs []log
+	var logs []map[string]string
 	for _, m := range messages {
-		logs = append(logs, log{Data: m})
+		log := make(map[string]string, len(c.metadata)+1)
+		for item := range c.metadata {
+			log[item] = c.metadata[item]
+		}
+		log["message"] = m
+
+		logs = append(logs, log)
 	}
 
 	if timestamp.IsZero() {
