@@ -40,6 +40,9 @@ The log2oms container requires only 4 environment variables to run:
 
 And that's it. No changes needed from app container.
 
+More flags:
+* `LOG2OMS_METADATA_*` This is an environment variable prefix for log metadata. The metadata will be sent to Log Analytics for every log message. This is useful if you have multiple replicas sending logs and want to differentiate them. For example, set `LOG2OMS_METADATA_Location=WestUS` and `LOG2OMS_METADATA_Role=Frontend`, logs in Analytics will have 2 more columns `Location` and `Role`.
+
 ## Sample for Kubernetes
 `samples/kubernetes/deploy.yaml` is a sample yaml how to deploy an nginx server with log2oms as a sidecar. 
 
@@ -59,10 +62,7 @@ To try the sample:
 2. After deployment succeed (should be a few seconds), access the container public IP address to generate a few lines of logs. Use Azure portal or [Cloud Shell](https://shell.azure.com) command `az container show -g {resource-group} -n {container-group-name}` to find out the public IP address.
 3. Wait a few minutes to let LogAnalytics process, then you can query `nginx_access_CL | take 100` in LogAnalytics to see the nginx access logs.
 
-# Production usage
-This project demonstrate how sidecar pattern upload logs to OMS, however it's probably not production ready yet (contributions welcome though!）
-
 # Future improvements
-* Support watch multiple log files, so you can split stdout / stderr or logs from multiple containers in same pod.
-* Include metadata in log lines, so you can filter logs by container name, location, etc in log analytics.
 * Send a heartbeat signal to log analytics so you know when it is working / stop working.
+* Handle SIGTERM to flush out logs before termination.
+* Exit on a termination signal file. This will be useful for task containers so the sidecar can stop automatically.

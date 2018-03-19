@@ -15,7 +15,7 @@ const (
 	envLogType         = "LOG2OMS_LOG_TYPE"
 	envWorkspaceID     = "LOG2OMS_WORKSPACE_ID"
 	envWorkspaceSecret = "LOG2OMS_WORKSPACE_SECRET"
-	envMetadataPrefix  = "LOG2OMS_META_"
+	envMetadataPrefix  = "LOG2OMS_METADATA_"
 )
 
 var (
