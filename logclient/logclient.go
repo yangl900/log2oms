@@ -53,6 +53,10 @@ func (c *LogClient) PostMessage(message string, timestamp time.Time) error {
 
 // PostMessages logs an array of messages to log analytics service
 func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
+	if timestamp.IsZero() {
+		timestamp = time.Now().UTC()
+	}
+
 	var logs []map[string]string
 	for _, m := range messages {
 		log := make(map[string]string, len(c.metadata)+1)
@@ -60,12 +64,9 @@ func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 			log[item] = c.metadata[item]
 		}
 		log["message"] = m
+		log["timeGenerated"] = timestamp.Format(time.RFC3339)
 
 		logs = append(logs, log)
-	}
-
-	if timestamp.IsZero() {
-		timestamp = time.Now().UTC()
 	}
 
 	body, _ := json.Marshal(logs)
@@ -80,7 +81,7 @@ func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Log-Type", c.logType)
 	req.Header.Set("x-ms-date", date)
-	req.Header.Set("time-generated-field", timestamp.Format(time.RFC3339))
+	req.Header.Set("time-generated-field", "timeGenerated")
 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
