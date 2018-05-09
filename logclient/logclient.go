@@ -64,7 +64,7 @@ func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 			log[item] = c.metadata[item]
 		}
 		log["message"] = m
-		log["timeGenerated"] = timestamp.Format(time.RFC3339)
+		log["Timestamp"] = timestamp.Format(time.RFC3339)
 
 		logs = append(logs, log)
 	}
@@ -81,7 +81,7 @@ func (c *LogClient) PostMessages(messages []string, timestamp time.Time) error {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Log-Type", c.logType)
 	req.Header.Set("x-ms-date", date)
-	req.Header.Set("time-generated-field", "timeGenerated")
+	req.Header.Set("time-generated-field", "Timestamp")
 
 	response, err := c.httpClient.Do(req)
 	if err != nil {
