@@ -6,7 +6,6 @@ RUN apk add --no-cache git
 RUN go get github.com/golang/dep/cmd/dep
 
 WORKDIR /go/src/github.com/yangl900/log2oms/
-RUN dep ensure -vendor-only
 RUN go test -v && CGO_ENABLED=0 GOOS=linux go build -o log2oms
 
 # final stage
