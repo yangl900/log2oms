@@ -1,6 +1,6 @@
 #MSMQ
 param (
-    [string]$repo = "myrepo"
+    [string]$repo = "myplooploops"
 )
 
 docker push "$repo/golang:windowsservercore-1803"

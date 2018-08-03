@@ -1,5 +1,5 @@
 param (
-    [string]$repo = "myrepo"
+    [string]$repo = "myplooploops"
 )
 
 docker build -f .\windows-container\windows-build\windows-go\Dockerfile -t "$repo/golang:windowsservercore-1803" .
