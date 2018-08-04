@@ -1,5 +1,5 @@
 # build stage
-FROM myplooploops/golang:windowsservercore-1803 AS build-env
+FROM golang:1.9.7-windowsservercore-1803 AS build-env
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 ADD . /go/src/github.com/yangl900/log2oms
