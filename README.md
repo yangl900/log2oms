@@ -75,6 +75,29 @@ export LOG2OMS_LOG_TYPE={log-table-name}
 curl -sL https://github.com/yangl900/log2oms/releases/download/v0.1.0/log2oms_linux_64-bit.tar.gz | tar xz && ./log2oms
 ```
 
+## Running on Windows Containers
+
+### Build the container
+
+Run the script in powershell, and be sure to point to your repository.
+
+```
+.\build.ps1 <my repo>
+```
+
+### Test Windows Container Locally
+```
+docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the secret' -e LOG2OMS_LOG_FILE='log-path' -e LOG2OMS_LOG_TYPE='log-type' <repo>/log2oms:nanoserver-1803
+```
+
+### Push to repo
+
+Run the script in powershell, and be sure to point to your repository.
+
+```
+.\push.ps1 <my repo>
+```
+
 # Future improvements
 * Send a heartbeat signal to log analytics so you know when it is working / stop working.
 * Handle SIGTERM to flush out logs before termination.
