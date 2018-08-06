@@ -16,6 +16,10 @@ So I implemented this tiny agent that uses Log Analytics data collector API (htt
 
 The docker image is published at https://hub.docker.com/r/yangl/log2oms/
 
+Published images Linux and Windows:
+- yangl/log2oms:latest
+- yangl/log2oms:nanoserver-1803
+
 The best way to use log2oms is by adopting the "[sidecar](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar)" pattern. Having log2oms container (image `yangl/log2oms`) run as a "sidecar" of your app container, and use a shared volume to read the app logs and uplaod to log2oms.
 
 Take a nginx web server as example, you simply run `yangl/log2oms` as another container and shares the nginx /var/log/nginx volume. log2oms will tail the nginx logs and upload to Log Analytics automatically.
