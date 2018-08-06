@@ -79,15 +79,15 @@ curl -sL https://github.com/yangl900/log2oms/releases/download/v0.1.0/log2oms_li
 
 ### Build the container
 
-Run the script in powershell, and be sure to point to your repository.
+Run the script in powershell, and optionally tag with your repository.
 
 ```
-.\build.ps1 <my repo>
+.\DockerBuild.ps1 <my-repo-optional>
 ```
 
 ### Test Windows Container Locally
 ```
-docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the secret' -e LOG2OMS_LOG_FILE='log-path' -e LOG2OMS_LOG_TYPE='log-type' <repo>/log2oms:nanoserver-1803
+docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the secret' -e LOG2OMS_LOG_FILE='log-path' -e LOG2OMS_LOG_TYPE='log-type' <my-repo-optional>/log2oms:nanoserver-1803
 ```
 
 ### Push to repo
@@ -95,7 +95,7 @@ docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the
 Run the script in powershell, and be sure to point to your repository.
 
 ```
-.\push.ps1 <my repo>
+.\DockerPush.ps1 <my-repo>
 ```
 
 # Future improvements
