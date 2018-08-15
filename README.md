@@ -16,6 +16,10 @@ So I implemented this tiny agent that uses Log Analytics data collector API (htt
 
 The docker image is published at https://hub.docker.com/r/yangl/log2oms/
 
+Published images Linux and Windows:
+- yangl/log2oms:latest
+- yangl/log2oms:nanoserver-1803
+
 The best way to use log2oms is by adopting the "[sidecar](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar)" pattern. Having log2oms container (image `yangl/log2oms`) run as a "sidecar" of your app container, and use a shared volume to read the app logs and uplaod to log2oms.
 
 Take a nginx web server as example, you simply run `yangl/log2oms` as another container and shares the nginx /var/log/nginx volume. log2oms will tail the nginx logs and upload to Log Analytics automatically.
@@ -79,15 +83,15 @@ curl -sL https://github.com/yangl900/log2oms/releases/download/v0.1.0/log2oms_li
 
 ### Build the container
 
-Run the script in powershell, and be sure to point to your repository.
+Run the script in powershell, and optionally tag with your repository.
 
 ```
-.\build.ps1 <my repo>
+.\DockerBuild.ps1 <my-repo-optional>
 ```
 
 ### Test Windows Container Locally
 ```
-docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the secret' -e LOG2OMS_LOG_FILE='log-path' -e LOG2OMS_LOG_TYPE='log-type' <repo>/log2oms:nanoserver-1803
+docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the secret' -e LOG2OMS_LOG_FILE='log-path' -e LOG2OMS_LOG_TYPE='log-type' <my-repo-optional>/log2oms:nanoserver-1803
 ```
 
 ### Push to repo
@@ -95,7 +99,7 @@ docker run -it -e LOG2OMS_WORKSPACE_ID='OMS ID' -e LOG2OMS_WORKSPACE_SECRET='the
 Run the script in powershell, and be sure to point to your repository.
 
 ```
-.\push.ps1 <my repo>
+.\DockerPush.ps1 <my-repo>
 ```
 
 # Future improvements
