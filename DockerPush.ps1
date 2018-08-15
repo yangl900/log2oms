@@ -3,4 +3,5 @@ param (
     [string]$repo
 )
 
-docker push "$repo/log2oms:nanoserver-1803"
+$tag = "log2oms:nanoserver-1803"
+docker push "$repo/$tag"
